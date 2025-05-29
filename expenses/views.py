@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Sum, Count  # Добавьте Count здесь
+from django.db.models import Sum, Count  
 from datetime import date, timedelta
 from .models import Expense, Category
 from .forms import ExpenseForm, CategoryForm
@@ -39,20 +39,18 @@ def dashboard(request):
     total_expenses = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
     
     categories = Category.objects.filter(user=request.user)
-    # Анализ расходов
     category_stats = expenses.values('category__name').annotate(
         total=Sum('amount'),
-        count=Count('id')  # Используйте Count напрямую
+        count=Count('id')  
     ).order_by('-total')
     
-    # Пользовательские уведомления
     notifications = []
     restaurant_spending = expenses.filter(category__name__icontains='Рестораны').aggregate(Sum('amount'))['amount__sum'] or 0
-    if restaurant_spending > 1000:  # Пример порога для уведомления
+    if restaurant_spending > 1000:  
         notifications.append(f"Вы потратили {restaurant_spending} на Рестораны в этом месяце. Дома еды нет?")
 
     taxi_spending = expenses.filter(category__name__icontains='Такси').aggregate(Sum('amount'))['amount__sum'] or 0
-    if taxi_spending > 1000:  # Пример порога для уведомления
+    if taxi_spending > 1000:  
         notifications.append(f"Вы потратили {taxi_spending} на Такси в этом месяце. Может стоит пройтись пешком?")
     
     context = {
@@ -76,7 +74,7 @@ def add_expense(request):
             expense.save()
             return redirect('dashboard')
     else:
-        form = ExpenseForm(request.user)  # Передаем пользователя в форму
+        form = ExpenseForm(request.user) 
     
     return render(request, 'expenses/add_expense.html', {'form': form})
 
@@ -97,10 +95,8 @@ def add_category(request):
 
 @login_required
 def export_to_excel(request):
-    # Получаем данные
     expenses = Expense.objects.filter(user=request.user).order_by('-date')
-    
-    # Создаем Excel-файл
+   
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = f'attachment; filename="expenses_{datetime.now().strftime("%Y-%m-%d")}.xlsx"'
     
@@ -108,10 +104,8 @@ def export_to_excel(request):
     ws = wb.active
     ws.title = "Расходы"
     
-    # Заголовки
     ws.append(['Дата', 'Категория', 'Сумма', 'Описание'])
     
-    # Данные
     for expense in expenses:
         ws.append([
             expense.date.strftime("%d.%m.%Y"),

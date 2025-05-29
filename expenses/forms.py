@@ -6,7 +6,7 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ['name']
         labels = {
-            'name': 'Название категории'  # Русская метка для поля
+            'name': 'Название категории'  
         }
         widgets = {
             'name': forms.TextInput(attrs={

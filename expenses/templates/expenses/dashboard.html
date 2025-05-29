@@ -1,0 +1,88 @@
+{% extends 'expenses/base.html' %} {% block content %}
+<h2>Отчет за {{ current_month }}</h2>
+
+{% if notifications %}
+<div class="alert alert-warning">
+	<h4>Предупреждения!</h4>
+	<ul>
+		{% for notification in notifications %}
+		<li>{{ notification }}</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endif %}
+
+<h3>Ваши категории</h3>
+<ul>
+	{% for category in categories %}
+	<li>{{ category.name }}</li>
+	{% empty %}
+	<li>Нет категорий</li>
+	{% endfor %}
+</ul>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+	<h2>Отчет за {{ current_month }}</h2>
+	<a href="{% url 'export_excel' %}" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Экспорт в Excel </a>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="card mb-4">
+			<div class="card-header">
+				<h5>Общие расходы: {{ total_expenses }} руб.</h5>
+			</div>
+			<div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto;">
+				<table class="table table-striped">
+					<thead class="sticky-top bg-white">
+						<tr>
+							<th>Категория</th>
+							<th>Сумма</th>
+							<th>Кол-во</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for stat in category_stats %}
+						<tr>
+							<td>{{ stat.category__name }}</td>
+							<td>{{ stat.total|floatformat:2 }} руб.</td>
+							<td>{{ stat.count }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div class="card">
+			<div class="card-header">
+				<h5>Последние расходы</h5>
+			</div>
+			<div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto;">
+				<table class="table table-striped">
+					<thead class="sticky-top bg-white">
+						<tr>
+							<th>Дата</th>
+							<th>Категория</th>
+							<th>Сумма</th>
+							<th>Описание</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for expense in expenses %}
+						<tr>
+							<td>{{ expense.date|date:"j E Y" }}</td>
+							<td>{{ expense.category.name }}</td>
+							<td>{{ expense.amount|floatformat:2 }} руб.</td>
+							<td>{{ expense.description|default:"-" }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

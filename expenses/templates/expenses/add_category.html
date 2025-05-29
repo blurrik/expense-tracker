@@ -1,0 +1,19 @@
+{% extends 'expenses/base.html' %} {% block content %}
+<h2>Добавить категорию</h2>
+<form method="post" class="mt-4">
+	{% csrf_token %}
+
+	<div class="form-group mb-3">
+		<label for="{{ form.name.id_for_label }}" class="form-label">
+			{{ form.name.label }}
+		</label>
+		{{ form.name }} {% if form.name.errors %}
+		<div class="invalid-feedback d-block">
+			{{ form.name.errors }}
+		</div>
+		{% endif %}
+	</div>
+
+	<button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+{% endblock %}

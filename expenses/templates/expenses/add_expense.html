@@ -1,0 +1,35 @@
+{% extends 'expenses/base.html' %} {% block content %}
+<h2>Добавить расход</h2>
+<form method="post">
+	{% csrf_token %}
+
+	<div class="form-group">
+		<label>Сумма (руб):</label>
+		<input type="number" class="form-control" name="amount" required />
+	</div>
+
+	<div class="form-group">
+		<label>Категория:</label>
+		<select class="form-control" name="category" required>
+			<option value="" selected disabled>Выберите категорию</option>
+			{% for category in request.user.categories.all %}
+			<option value="{{ category.id }}">{{ category.name }}</option>
+			{% empty %}
+			<option disabled>Нет доступных категорий</option>
+			{% endfor %}
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label>Дата:</label>
+		<input type="date" class="form-control" name="date" required />
+	</div>
+
+	<div class="form-group">
+		<label>Описание:</label>
+		<textarea class="form-control" name="description"></textarea>
+	</div>
+	<br />
+	<button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+{% endblock %}
